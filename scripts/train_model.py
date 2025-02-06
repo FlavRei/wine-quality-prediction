@@ -13,5 +13,5 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = RandomForestRegressor(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
 
-joblib.dump(model, 'model/red_wine_model.pkl')
-print("Model trained and saved in model/red_wine_model.pkl")
+joblib.dump(model, 'app/model/red_wine_model.pkl')
+print("Model trained and saved in app/model/red_wine_model.pkl")
