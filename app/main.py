@@ -1,12 +1,16 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from app.model_prediction import predict
+from prometheus_client import start_http_server, Summary, generate_latest
+from fastapi.responses import PlainTextResponse
 
 app = FastAPI(
     title="Wine Quality Prediction API",
     description="API to predict wine quality based on its characteristics.",
     version="1.0.0"
 )
+
+PREDICTION_TIME = Summary('prediction_processing_seconds', 'Time spent processing prediction')
 
 
 class WineFeatures(BaseModel):
@@ -48,3 +52,11 @@ def predict_wine(features: WineFeatures):
         return {"predicted_quality": quality}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/metrics", response_class=PlainTextResponse)
+def metrics():
+    """
+    Exposes Prometheus metrics.
+    """
+    return generate_latest()
