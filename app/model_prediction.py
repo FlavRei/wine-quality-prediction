@@ -3,11 +3,13 @@ import os
 
 RED_WINE_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model/red_wine_model.pkl')
 
+
 def load_model(model):
     if not os.path.exists(model):
-        raise FileNotFoundError(f"The model was not found at the location {model}")
+        raise FileNotFoundError(f"Model not found at {model}")
     model = joblib.load(model)
     return model
+
 
 def predict(input_data):
     """

@@ -1,11 +1,13 @@
 from app.model_prediction import load_model, predict
 import os
 
-RED_WINE_MODEL_PATH = os.path.join(os.path.dirname(__file__), '..\\app\\model\\red_wine_model.pkl')
+RED_WINE_MODEL_PATH = os.path.join(os.path.dirname(__file__), '../app/model/red_wine_model.pkl')
+
 
 def test_load_model():
     model = load_model(RED_WINE_MODEL_PATH)
     assert model is not None
+
 
 def test_predict():
     input_data = {

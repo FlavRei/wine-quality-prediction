@@ -8,6 +8,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
 class WineFeatures(BaseModel):
     fixed_acidity: float
     volatile_acidity: float
@@ -21,9 +22,11 @@ class WineFeatures(BaseModel):
     sulphates: float
     alcohol: float
 
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Wine Quality Prediction API!"}
+
 
 @app.post("/predict")
 def predict_wine(features: WineFeatures):

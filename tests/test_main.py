@@ -3,12 +3,14 @@ from app.main import app
 
 client = TestClient(app)
 
+
 def test_read_root():
     response = client.get("/")
     assert response.status_code == 200
     json_data = response.json()
     assert "message" in json_data
     assert "Welcome" in json_data["message"]
+
 
 def test_predict_endpoint():
     payload = {
@@ -27,4 +29,4 @@ def test_predict_endpoint():
     response = client.post("/predict", json=payload)
     assert response.status_code == 200
     json_data = response.json()
-    assert "predicted_quality" in json_data, "The response must contain the key 'predicted_quality'"
+    assert "predicted_quality" in json_data, "Response must contain key 'predicted_quality'"
