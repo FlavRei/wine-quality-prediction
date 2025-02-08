@@ -1,0 +1,5 @@
+outs:
+- md5: d4aa029b00f4b8caf7d8455d5954efb7
+  size: 3432401
+  hash: md5
+  path: red_wine_model.pkl
