@@ -31,7 +31,8 @@ jobs:
           username: ${{ secrets.GCP_VM_USER }}
           key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           script: |
-            sudo gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+            ACCESS_TOKEN=$(gcloud auth print-access-token)
+            sudo docker login -u oauth2accesstoken -p "$ACCESS_TOKEN" https://europe-west1-docker.pkg.dev
             sudo docker pull europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest
             sudo docker stop wine-quality-prediction-api || true
             sudo docker rm wine-quality-prediction-api || true
