@@ -18,7 +18,11 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Configure Docker for GCP
-        run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+          echo '${{ secrets.GCP_SA_KEY }}' > gcp_sa_key.json
+          gcloud auth activate-service-account --key-file=gcp_sa_key.json
+          rm -f gcp_sa_key.json
       - name: Build and push Docker image
         run: |
           docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest -f Dockerfile.api .
