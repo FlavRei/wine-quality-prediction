@@ -30,6 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install DVC
+        run: pip install dvc
       - name: Pull model from DVC
         run: |
           poetry run dvc pull app/model/red_wine_model.pkl
@@ -69,8 +71,6 @@ jobs:
         run: terraform init
         working-directory: terraform  
       - name: Plan Terraform
-        run: terraform plan -var "credentials_file=${{ secrets.GCP_SA_KEY }}"
-        working-directory: terraform
+        run: terraform plan -var "credentials_file=${{ secrets.GCP_SA_KEY }}" -chdir=terraform
       - name: Apply Terraform
-        run: terraform apply -auto-approve -var "credentials_file=${{ secrets.GCP_SA_KEY }}"
-        working-directory: terraform
+        run: terraform apply -auto-approve -var "credentials_file=${{ secrets.GCP_SA_KEY }}" -chdir=terraform
