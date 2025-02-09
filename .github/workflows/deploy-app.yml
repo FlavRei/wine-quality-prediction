@@ -18,12 +18,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Configure Docker for GCP
-        run: |
-          echo '${{ secrets.GCP_SA_KEY }}' > gcp_sa_key.json
-          gcloud auth activate-service-account --key-file=gcp_sa_key.json
-          gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
-          docker-credential-gcloud configure-docker
-          rm -f gcp_sa_key.json
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev
       - name: Build and push Docker image
         run: |
           docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest -f Dockerfile.api .
@@ -36,6 +31,7 @@ jobs:
           username: ${{ secrets.GCP_VM_USER }}
           key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           script: |
+            gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
             docker pull europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest
             docker stop wine-quality-prediction-api || true
             docker rm wine-quality-prediction-api || true
