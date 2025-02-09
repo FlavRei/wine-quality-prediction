@@ -82,6 +82,7 @@ jobs:
           terraform -chdir=terraform plan
       - name: Import existing firewall rule
         run: |
+          export TF_VAR_credentials_file="$(pwd)/credentials.json"
           terraform -chdir=terraform import google_compute_firewall.allow-http projects/wine-quality-prediction-450400/global/firewalls/allow-http
       - name: Apply Terraform
         run: |
