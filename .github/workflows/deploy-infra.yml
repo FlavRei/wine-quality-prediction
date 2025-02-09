@@ -75,15 +75,19 @@ jobs:
         run: |
           echo '${{ secrets.GCP_SA_KEY }}' > credentials.json
       - name: Initialize Terraform
-        run: terraform -chdir=terraform init
-      - name: Plan Terraform
-        run: |
-          export TF_VAR_credentials_file="$(pwd)/credentials.json"
-          terraform -chdir=terraform plan
+        run: terraform -chdir=terraform init      
       - name: Import existing firewall rule
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
           terraform -chdir=terraform import google_compute_firewall.allow-http projects/wine-quality-prediction-450400/global/firewalls/allow-http
+      - name: Import existing Artifact Registry repository
+        run: |
+          export TF_VAR_credentials_file="$(pwd)/credentials.json"
+          terraform -chdir=terraform import google_artifact_registry_repository.wine-quality-prediction-api projects/wine-quality-prediction-450400/locations/europe-west1/repositories/wine-quality-prediction-api
+      - name: Plan Terraform
+        run: |
+          export TF_VAR_credentials_file="$(pwd)/credentials.json"
+          terraform -chdir=terraform plan
       - name: Apply Terraform
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
