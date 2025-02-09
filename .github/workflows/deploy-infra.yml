@@ -30,6 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Pull model from DVC
+        run: |
+          dvc pull app/model/red_wine_model.pkl
       - name: Set up Python
         uses: actions/setup-python@v4
         with:

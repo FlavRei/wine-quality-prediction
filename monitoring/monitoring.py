@@ -1,7 +1,6 @@
 import pandas as pd
 from evidently.report import Report
 from evidently.metric_preset import DataDriftPreset, DataQualityPreset
-import joblib
 import json
 
 
@@ -26,7 +25,7 @@ def generate_drift_report():
     prod_data = load_production_data()
 
     report = Report(metrics=[
-        DataDriftPreset(), 
+        DataDriftPreset(),
         DataQualityPreset()
     ])
     report.run(reference_data=train_data, current_data=prod_data)

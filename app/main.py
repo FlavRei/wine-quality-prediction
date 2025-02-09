@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from app.model_prediction import predict
-from prometheus_client import start_http_server, Summary, generate_latest
+from prometheus_client import Summary, generate_latest
 from fastapi.responses import PlainTextResponse
 
 app = FastAPI(
