@@ -75,7 +75,7 @@ jobs:
         run: terraform -chdir=terraform init
       - name: Create temporary credentials file
         run: |
-          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > $HOME/gcp-credentials.json
+          printf '%s' "${{ secrets.GCP_SA_KEY }}" > $HOME/gcp-credentials.json
       - name: Plan Terraform
         run: terraform -chdir=terraform plan -var="credentials_file=$HOME/gcp-credentials.json"
       - name: Apply Terraform
