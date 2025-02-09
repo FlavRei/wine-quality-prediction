@@ -1,27 +1,27 @@
 variable "project_id" {
-  description = "L'ID du projet GCP"
+  description = "GCP project ID"
   type        = string
 }
 
 variable "region" {
-  description = "La région GCP"
+  description = "GCP region"
   type        = string
   default     = "europe-west9"
 }
 
 variable "zone" {
-  description = "La zone GCP"
+  description = "GCP area"
   type        = string
   default     = "europe-west9-a"
 }
 
 variable "machine_type" {
-  description = "Le type de machine pour l'instance"
+  description = "Machine type for the instance"
   type        = string
   default     = "e2-micro"
 }
 
 variable "credentials_file" {
-  description = "Chemin vers le fichier de clé JSON du compte de service"
+  description = "GCP Service Account JSON"
   type        = string
 }
