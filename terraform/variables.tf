@@ -25,3 +25,8 @@ variable "credentials_file" {
   description = "GCP Service Account JSON"
   type        = string
 }
+
+variable "gcp_ssh_public_key" {
+  description = "Path to the GCP SSH public key"
+  type        = string
+}

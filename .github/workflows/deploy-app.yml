@@ -29,17 +29,8 @@ jobs:
         with:
           host: ${{ secrets.GCP_VM_IP }}
           username: ${{ secrets.GCP_VM_USER }}
-          key: ${{ secrets.GCP_SSH_KEY }}
+          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           script: |
-            if ! command -v docker &> /dev/null
-            then
-                echo "Docker non trouvé, installation en cours..."
-                sudo apt update
-                sudo apt install -y docker.io
-                sudo systemctl enable docker
-                sudo systemctl start docker
-            fi
-            docker --version
             docker pull europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest
             docker stop wine-quality-prediction-api || true
             docker rm wine-quality-prediction-api || true

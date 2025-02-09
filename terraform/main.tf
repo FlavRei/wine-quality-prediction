@@ -30,6 +30,10 @@ resource "google_compute_instance" "wine-quality-prediction_instance" {
     access_config {}
   }
 
+  metadata = {
+    ssh-keys = "flavian_reignault:${file(var.gcp_ssh_public_key)}"
+  }
+
   tags = ["wine-quality-prediction"]
 }
 

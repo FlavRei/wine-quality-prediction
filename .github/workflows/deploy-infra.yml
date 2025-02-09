@@ -74,23 +74,33 @@ jobs:
       - name: Write credentials to a temporary file
         run: |
           echo '${{ secrets.GCP_SA_KEY }}' > credentials.json
+      - name: Write SSH key to a temporary file
+        run: |
+          echo '${{ secrets.GCP_SSH_PUBLIC_KEY }}' > ssh_key.pub
+          chmod 600 ssh_key.pub
       - name: Initialize Terraform
         run: terraform -chdir=terraform init      
       - name: Import existing firewall rule
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
+          export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform import google_compute_firewall.allow-http projects/wine-quality-prediction-450400/global/firewalls/allow-http
       - name: Import existing Artifact Registry repository
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
+          export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform import google_artifact_registry_repository.wine-quality-prediction-api projects/wine-quality-prediction-450400/locations/europe-west1/repositories/wine-quality-prediction-api
       - name: Plan Terraform
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
+          export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform plan
       - name: Apply Terraform
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
+          export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform apply -auto-approve
       - name: Clean up temporary credentials file
-        run: rm -f credentials.json
+        run: |
+          rm -f credentials.json
+          rm -f ssh_key.pub
