@@ -34,7 +34,7 @@ jobs:
         run: pip install dvc
       - name: Pull model from DVC
         run: |
-          poetry run dvc pull app/model/red_wine_model.pkl
+          dvc pull app/model/red_wine_model.pkl
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -68,8 +68,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }} 
       - name: Initialize Terraform
-        run: terraform init
-        working-directory: terraform  
+        run: terraform init -chdir=terraform
       - name: Plan Terraform
         run: terraform plan -var "credentials_file=${{ secrets.GCP_SA_KEY }}" -chdir=terraform
       - name: Apply Terraform
