@@ -72,13 +72,8 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }} 
       - name: Initialize Terraform
-        run: terraform -chdir=terraform init
-      - name: Create temporary credentials file
-        run: |
-          printf '%s' "${{ secrets.GCP_SA_KEY }}" > $HOME/gcp-credentials.json
-      - name: Debug credentials file
-        run: head -n 1 $HOME/gcp-credentials.json        
+        run: terraform -chdir=terraform init        
       - name: Plan Terraform
-        run: terraform -chdir=terraform plan -var="credentials_file=$HOME/gcp-credentials.json"
+        run: terraform -chdir=terraform plan
       - name: Apply Terraform
-        run: terraform -chdir=terraform apply -auto-approve -var="credentials_file=$HOME/gcp-credentials.json"
+        run: terraform -chdir=terraform apply -auto-approve
