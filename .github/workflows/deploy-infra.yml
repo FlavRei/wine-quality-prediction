@@ -30,11 +30,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install DVC
-        run: pip install dvc
+      - name: Install Poetry
+        run: pip install poetry
+      - name: Install dependencies
+        run: poetry install --no-root
       - name: Pull model from DVC
         run: |
-          dvc pull app/model/red_wine_model.pkl
+          poetry run dvc pull app/model/red_wine_model.pkl
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -68,8 +70,8 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }} 
       - name: Initialize Terraform
-        run: terraform init -chdir=terraform
+        run: terraform -chdir=terraform init
       - name: Plan Terraform
-        run: terraform plan -var "credentials_file=${{ secrets.GCP_SA_KEY }}" -chdir=terraform
+        run: terraform -chdir=terraform plan -var "credentials_file=${{ secrets.GCP_SA_KEY }}"
       - name: Apply Terraform
-        run: terraform apply -auto-approve -var "credentials_file=${{ secrets.GCP_SA_KEY }}" -chdir=terraform
+        run: terraform -chdir=terraform apply -auto-approve -var "credentials_file=${{ secrets.GCP_SA_KEY }}"

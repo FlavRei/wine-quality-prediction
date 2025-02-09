@@ -1,0 +1,4 @@
+[core]
+    remote = wine-quality-prediction-remote
+['remote "wine-quality-prediction-remote"']
+    url = gs://wine-quality-prediction-dvc-bucket
