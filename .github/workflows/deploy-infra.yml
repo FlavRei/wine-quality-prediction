@@ -38,6 +38,8 @@ jobs:
         run: pip install poetry
       - name: Install dependencies
         run: poetry install --no-root
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$(pwd)/app" >> $GITHUB_ENV
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v2
         with:
