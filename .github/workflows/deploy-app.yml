@@ -21,8 +21,8 @@ jobs:
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev
       - name: Build and push Docker image
         run: |
-          docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mlops-api/mlops-api:latest .
-          docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mlops-api/mlops-api:latest
+          docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest .
+          docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest
 
       - name: Deploy to Compute Engine via SSH
         uses: appleboy/ssh-action@v0.1.6
@@ -31,7 +31,7 @@ jobs:
           username: ${{ secrets.GCP_VM_USER }}
           key: ${{ secrets.GCP_SSH_KEY }}
           script: |
-            docker pull europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mlops-api/mlops-api:latest
-            docker stop mlops-api || true
-            docker rm mlops-api || true
-            docker run -d -p 80:8000 --name mlops-api europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mlops-api/mlops-api:latest
+            docker pull europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest
+            docker stop wine-quality-prediction-api || true
+            docker rm wine-quality-prediction-api || true
+            docker run -d -p 80:8000 --name wine-quality-prediction-api europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest

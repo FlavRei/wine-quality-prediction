@@ -30,13 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install Poetry
-        run: pip install poetry
-      - name: Install dependencies
-        run: poetry install --no-root
-      - name: Pull model from DVC
-        run: |
-          poetry run dvc pull app/model/red_wine_model.pkl
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -44,7 +37,14 @@ jobs:
       - name: Install Poetry
         run: pip install poetry
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --no-root
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Pull model from DVC
+        run: |
+          poetry run dvc pull app/model/red_wine_model.pkl
       - name: Run tests with pytest
         run: poetry run pytest
 
@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build Docker image
-        run: docker build -f Dockerfile.api -t wine-quality-prediction:latest .
+        run: docker build -f Dockerfile.api -t wine-quality-prediction-api:latest .
     
   terraform:
     runs-on: ubuntu-latest
