@@ -71,13 +71,18 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }} 
+      - name: Write credentials to a temporary file
+        run: |
+          echo '${{ secrets.GCP_SA_KEY }}' > credentials.json
       - name: Initialize Terraform
-        run: terraform -chdir=terraform init        
+        run: terraform -chdir=terraform init
       - name: Plan Terraform
         run: |
-          export TF_VAR_credentials_file="${{ secrets.GCP_SA_KEY }}"
+          export TF_VAR_credentials_file="$(pwd)/credentials.json"
           terraform -chdir=terraform plan
       - name: Apply Terraform
         run: |
-          export TF_VAR_credentials_file="${{ secrets.GCP_SA_KEY }}"
+          export TF_VAR_credentials_file="$(pwd)/credentials.json"
           terraform -chdir=terraform apply -auto-approve
+      - name: Clean up temporary credentials file
+        run: rm -f credentials.json
