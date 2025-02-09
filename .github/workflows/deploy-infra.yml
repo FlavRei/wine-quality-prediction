@@ -71,6 +71,8 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }} 
+      - name: Debug GCP Authentication
+        run: gcloud auth list && gcloud config list
       - name: Initialize Terraform
         run: terraform -chdir=terraform init        
       - name: Plan Terraform

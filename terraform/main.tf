@@ -11,6 +11,7 @@ terraform {
 provider "google" {
   project     = var.project_id
   region      = var.region
+  request_timeout = "60s"
 }
 
 resource "google_compute_instance" "wine-quality-prediction_instance" {
