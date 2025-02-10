@@ -80,11 +80,12 @@ jobs:
           chmod 600 ssh_key.pub
       - name: Initialize Terraform
         run: terraform -chdir=terraform init      
-      - name: Import existing firewall rule
+      - name: Import existing firewall rules
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
           export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform import google_compute_firewall.allow-http projects/wine-quality-prediction-450400/global/firewalls/allow-http
+          terraform -chdir=terraform import google_compute_firewall.allow-ssh projects/wine-quality-prediction-450400/global/firewalls/allow-ssh
       - name: Import existing Artifact Registry repository
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
