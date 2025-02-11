@@ -8,9 +8,9 @@
 
 ## Overview
 
-The **Wine Quality Prediction MLOps Project** is a full-fledged machine learning operations solution that covers the complete lifecycle of a machine learning model—from data ingestion and training to deployment and monitoring. This project was built to help me understand and implement best practices in MLOps using a combination of tools and frameworks.
+The **Wine Quality Prediction MLOps Project** is a full-fledged machine learning operations solution that covers the complete lifecycle of a machine learning project—from data ingestion and training to deployment and monitoring. This project was built to help me understand and implement best practices in MLOps using a combination of tools and frameworks.
 
-The application predicts the quality of wine based on its physicochemical properties. It is served via a REST API and deployed as a Docker container on Google Cloud Platform. The project also includes automated pipelines for model training, versioning, infrastructure provisioning, CI/CD, and monitoring.
+The application predicts the quality of wine based on its physicochemical properties. It is served via a REST API and deployed as a Docker container on Google Cloud Platform. In addition, a front-end application is built with Streamlit, allowing users to adjust wine parameters using interactive sliders and obtain predictions through the API. The project also includes automated pipelines for model training, versioning, infrastructure provisioning, CI/CD, and monitoring.
 
 ---
 
@@ -33,10 +33,13 @@ The application predicts the quality of wine based on its physicochemical proper
 
 ## Features
 
-- **API for Wine Quality Prediction:**  
-  A FastAPI-based REST API that exposes an endpoint `/predict` to receive wine features and return quality predictions.
+- **API for wine quality prediction:**  
+  A FastAPI-based REST API exposes an endpoint `/predict` to receive wine features and return quality predictions.
 
-- **Automated Training Pipeline:**  
+- **Interactive front-end application:**  
+  A Streamlit application provides an interface with sliders for setting parameter ranges (e.g., acidity, alcohol, pH). Users can easily adjust values within realistic intervals and see the predicted wine quality.
+
+- **Automated training pipeline:**  
   An Airflow DAG orchestrates data ingestion, preprocessing, training, and evaluation of the ML model. Model experiments are tracked using MLflow and versioned with DVC.
 
 - **Infrastructure as Code:**  
@@ -52,11 +55,11 @@ The application predicts the quality of wine based on its physicochemical proper
 
 ## User Guide
 
-### How to Access the API
+### How to access the API
 
 Once deployed, the API is accessible via the public IP address of the Compute Engine instance. For example, it is now accessible on the IP `34.79.2.159`, the API endpoint is: http://34.79.2.159/predict
 
-#### Example Request
+#### Example request
 
 Send a POST request with a JSON payload containing the wine features:
 
@@ -79,6 +82,11 @@ curl -X POST http://34.79.2.159/predict \
   ```
   The API will respond with the predicted wine quality.
 
+### How to access the front-end application
+The Streamlit front-end application is deployed on Cloud Run and is accessible via the following public URL: https://wine-quality-prediction-app-732582219557.europe-west1.run.app/
+
+Using this interface, users can adjust wine properties with interactive sliders and immediately view the predicted quality.
+
 ## Developer Guide
 
 ### Architecture Overview
@@ -87,12 +95,15 @@ The project is organized into several key components:
 
 -   **API Service:**  
     Built with FastAPI, the service loads a pre-trained ML model for predicting wine quality and exposes REST endpoints.
+
+-   **Front-end application:**
+    A Streamlit app provides an interactive user interface with sliders for selecting input values. It consumes the API for wine quality predictions.
     
--   **Model Training Pipeline:**  
+-   **Model training pipeline:**  
     An Airflow DAG orchestrates the following steps:
     
-    -   **Data Ingestion:** Load the Wine Quality dataset.
-    -   **Model Training & Evaluation:** Train a RandomForest model, evaluate performance with RMSE, and track experiments using MLflow.
+    -   **Data ingestion:** Load the Wine Quality dataset.
+    -   **Model training & evaluation:** Train a RandomForest model, evaluate performance with RMSE, and track experiments using MLflow.
     -   **Versioning:** DVC is used to track datasets and model artifacts, ensuring reproducibility.
 -   **CI/CD & Infrastructure:**
     
@@ -109,29 +120,33 @@ The project is organized into several key components:
 
 ```
 wine-quality-prediction/
-├── app/                     # API code and model loading logic
+├── app/                          # API code and model loading logic
 │   ├── __init__.py
-│   ├── main.py              # FastAPI application
-│   └── model.py             # Code to load and use the ML model
-├── data/                    # Dataset files (e.g., winequality.csv)
-├── terraform/               # Terraform configuration files for GCP
+│   ├── main.py                   # FastAPI application
+│   └── model.py                  # Code to load and use the ML model
+├── data/                         # Dataset files (e.g., winequality.csv)
+├── terraform/                    # Terraform configuration files for GCP
 │   ├── main.tf
 │   ├── variables.tf
 │   └── terraform.tfvars
-├── tests/                   # Unit tests for the API and model functions
+├── tests/                        # Unit tests for the API and model functions
 │   ├── test_main.py
 │   └── test_model_prediction.py
-├── docker-compose.airflow.yml  # (Optional) For deploying Airflow
+├── streamlit/                    # Streamlit application folder
+│   └── app.py                    # Front-end application code
+├── docker-compose.airflow.yml    # (Optional) For deploying Airflow
 ├── docker-compose.monitoring.yml # (Optional) For deploying Prometheus/Grafana
-├── Dockerfile.api           # Dockerfile for building the API image
-├── pyproject.toml           # Poetry configuration and dependencies
-├── README.md                # This file
+├── Dockerfile.api                # Dockerfile for building the API image
+├── Dockerfile.streamlit          # Dockerfile for the Streamlit app image
+├── pyproject.toml                # Poetry configuration and dependencies
+├── README.md                     # This file
 └── ...
 ```
 
 ### Toolchain & Pipelines
 
 -   **FastAPI & Uvicorn:** For serving the API.
+-   **Streamlit:** Provides an interactive front-end for users.
 -   **Airflow:** Orchestrates the training pipeline (data ingestion, preprocessing, training, evaluation).
 -   **MLflow:** Tracks model parameters, metrics, and artifacts.
 -   **DVC:** Versions data and model files.
@@ -144,45 +159,48 @@ wine-quality-prediction/
 
 ### Local Development
 
-1.  **Clone the Repository:**
+1.  **Clone the repository:**
 
 ```
 git clone https://github.com/yourusername/wine-quality-prediction.git
 cd wine-quality-prediction
 ```
 
-2. **Install Dependencies with Poetry:**
+2. **Install dependencies with Poetry:**
 ```
 poetry install
 ```
-3. **Run the API Locally:**
+3. **Run the API locally:**
 ```
 uvicorn app.main:app --reload
 ```
 The API will be accessible at `http://127.0.0.1:8000`.
 
-4. **Run Tests:**
+4. **Run the Streamlit app locally:**
+```
+streamlit run streamlit/app.py
+```
+The front-end will be available at `http://127.0.0.1:8501`.
+
+5. **Run tests:**
 ```
 poetry run pytest
 ```
 
 ### CI/CD & Cloud Deployment
 
--   **CI/CD Pipelines:**  
-    GitHub Actions handles:
-    
-    -   **Linting & Testing:** Ensuring code quality.
-    -   **Docker Image Building:** Creating the container image for the API.
-    -   **Terraform Deployment:** Provisioning infrastructure on GCP.
-    -   **API Deployment:** SSH into the VM, pulling and running the Docker image.
--   **Infrastructure Provisioning:**  
-    Use Terraform (inside GitHub Actions) to deploy:
-    
-    -   Compute Engine instances
-    -   Firewall rules
-    -   Other resources as needed
--   **Artifact Registry:**  
-    Docker images are pushed to Artifact Registry and then pulled by the VM during deployment.
+**Deploy Infrastructure**
+-   **Deploy infrastructure to GCP:**
+    A GitHub Actions pipeline uses Terraform to provision GCP resources such as Compute Engine instances (for the API), firewall rules, and Artifact Registry repositories.
+    The pipeline imports existing resources when applicable and applies any new changes.
+
+**Deploy Applications**
+-   **Deploy API:**
+    A dedicated pipeline builds the API Docker image using Dockerfile.api, pushes it to Artifact Registry, and deploys it to the Compute Engine instance via SSH.
+
+-   **Deploy front-end:**
+    A second pipeline builds the Streamlit app Docker image using Dockerfile.streamlit, pushes it to Artifact Registry, and deploys it to Cloud Run via Terraform.
+    This deployment is fully managed by Terraform, ensuring an IaC approach that mirrors the API’s deployment process.
 
 ## Monitoring
 
@@ -196,3 +214,6 @@ poetry run pytest
 ## Final Notes
 
 Working on this project allowed me to put into practice the full spectrum of MLOps—from configuring CI/CD pipelines and managing infrastructure as code with Terraform, to integrating training, versioning, and model monitoring tools into one cohesive system. This project has deepened my understanding of the challenges involved in deploying and operating machine learning tools in production environments. 
+
+The API is accessible at the following address: http://34.79.2.159/predict
+The Streamlit app is available at: https://wine-quality-prediction-app-732582219557.europe-west1.run.app/
