@@ -69,3 +69,10 @@ resource "google_artifact_registry_repository" "wine-quality-prediction-api" {
   description   = "Docker repository for wine-quality-prediction API"
   format        = "DOCKER"
 }
+
+resource "google_artifact_registry_repository" "wine-quality-prediction-app" {
+  location      = "europe-west1"
+  repository_id = "wine-quality-prediction-app"
+  description   = "Docker repository for wine-quality-prediction app"
+  format        = "DOCKER"
+}

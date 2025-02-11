@@ -23,12 +23,9 @@ jobs:
       - name: Configure Docker for GCP
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-      - name: Build Docker image for Streamlit App
+      - name: Build and push Docker image for Streamlit App
         run: |
-          docker build -f Dockerfile.streamlit -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-app/wine-quality-prediction-app:latest .
-      
-      - name: Push Docker image for Streamlit App
-        run: |
+          docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-app/wine-quality-prediction-app:latest -f Dockerfile.streamlit .
           docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-app/wine-quality-prediction-app:latest
 
   terraform-deploy:

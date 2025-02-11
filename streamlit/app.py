@@ -30,9 +30,9 @@ if st.button("Predict quality"):
         "sulphates": sulphates,
         "alcohol": alcohol
     }
-    
+
     api_url = "http://34.79.2.159/predict"
-    
+
     try:
         response = requests.post(api_url, json=payload)
         response.raise_for_status()
