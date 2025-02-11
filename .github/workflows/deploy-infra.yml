@@ -105,11 +105,12 @@ jobs:
           terraform -chdir=terraform import google_compute_firewall.allow-http projects/wine-quality-prediction-450400/global/firewalls/allow-http
           terraform -chdir=terraform import google_compute_firewall.allow-ssh projects/wine-quality-prediction-450400/global/firewalls/allow-ssh
       
-      - name: Import existing Artifact Registry repository
+      - name: Import existing Artifact Registry repositories
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
           export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform import google_artifact_registry_repository.wine-quality-prediction-api projects/wine-quality-prediction-450400/locations/europe-west1/repositories/wine-quality-prediction-api
+          terraform -chdir=terraform import google_artifact_registry_repository.wine-quality-prediction-app projects/wine-quality-prediction-450400/locations/europe-west1/repositories/wine-quality-prediction-app
       
       - name: Import existing compute instance
         run: |
