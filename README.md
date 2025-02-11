@@ -54,14 +54,14 @@ The application predicts the quality of wine based on its physicochemical proper
 
 ### How to Access the API
 
-Once deployed, the API is accessible via the public IP address of the Compute Engine instance. For example, it is now accessible on the IP `34.163.221.230`, the API endpoint is: http://34.163.221.230/predict
+Once deployed, the API is accessible via the public IP address of the Compute Engine instance. For example, it is now accessible on the IP `34.79.2.159`, the API endpoint is: http://34.79.2.159/predict
 
 #### Example Request
 
 Send a POST request with a JSON payload containing the wine features:
 
 ```bash
-curl -X POST http://34.163.221.230/predict \
+curl -X POST http://34.79.2.159/predict \
   -H "Content-Type: application/json" \
   -d '{
     "fixed_acidity": 7.4,

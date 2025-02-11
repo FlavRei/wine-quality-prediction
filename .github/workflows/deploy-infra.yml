@@ -12,14 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
       - name: Install Poetry
         run: pip install poetry
+
       - name: Install dependencies
         run: poetry install --no-root
+
       - name: Lint with flake8
         run: |
           poetry add --dev flake8
@@ -30,23 +34,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
       - name: Install Poetry
         run: pip install poetry
+
       - name: Install dependencies
         run: poetry install
+
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$(pwd)/app" >> $GITHUB_ENV
+
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+
       - name: Pull model from DVC
         run: |
           poetry run dvc pull app/model/red_wine_model.pkl
+
       - name: Run tests with pytest
         run: poetry run pytest
 
@@ -55,6 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Build Docker image
         run: docker build -f Dockerfile.api -t wine-quality-prediction-api:latest .
     
@@ -63,49 +75,60 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.4.6  
+          terraform_version: 1.4.6
+
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }} 
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
       - name: Write credentials to a temporary file
         run: |
           echo '${{ secrets.GCP_SA_KEY }}' > credentials.json
+
       - name: Write SSH key to a temporary file
         run: |
           echo '${{ secrets.GCP_SSH_PUBLIC_KEY }}' > ssh_key.pub
           chmod 600 ssh_key.pub
+
       - name: Initialize Terraform
-        run: terraform -chdir=terraform init      
+        run: terraform -chdir=terraform init
+
       - name: Import existing firewall rules
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
           export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform import google_compute_firewall.allow-http projects/wine-quality-prediction-450400/global/firewalls/allow-http
           terraform -chdir=terraform import google_compute_firewall.allow-ssh projects/wine-quality-prediction-450400/global/firewalls/allow-ssh
+      
       - name: Import existing Artifact Registry repository
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
           export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform import google_artifact_registry_repository.wine-quality-prediction-api projects/wine-quality-prediction-450400/locations/europe-west1/repositories/wine-quality-prediction-api
+      
       - name: Import existing compute instance
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
           export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform import google_compute_instance.wine-quality-prediction_instance projects/wine-quality-prediction-450400/zones/europe-west1-b/instances/wine-quality-prediction-instance
+      
       - name: Plan Terraform
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
           export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform plan
+      
       - name: Apply Terraform
         run: |
           export TF_VAR_credentials_file="$(pwd)/credentials.json"
           export TF_VAR_gcp_ssh_public_key="$(pwd)/ssh_key.pub"
           terraform -chdir=terraform apply -auto-approve
+          
       - name: Clean up temporary credentials file
         run: |
           rm -f credentials.json

@@ -8,24 +8,31 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-api:
+    name: Deploy API to Cloud Run
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+
       - name: Configure Docker for GCP
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+
       - name: Install Poetry
         run: pip install poetry
+
       - name: Install dependencies
         run: poetry install
+
       - name: Pull model from DVC
         run: |
           poetry run dvc pull app/model/red_wine_model.pkl
+
       - name: Build and push Docker image
         run: |
           docker build -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest -f Dockerfile.api .
@@ -46,3 +53,32 @@ jobs:
             sudo docker stop wine-quality-prediction-api || true
             sudo docker rm wine-quality-prediction-api || true
             sudo docker run -d -p 80:8000 --name wine-quality-prediction-api europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-api/wine-quality-prediction-api:latest
+
+  deploy-app:
+    name: Deploy Streamlit App to Cloud Run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker for GCP
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+      - name: Build and push Docker image for Streamlit App
+        run: |
+          docker build -f Dockerfile.streamlit -t europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-app/wine-quality-prediction-app:latest .
+          docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-app/wine-quality-prediction-app:latest
+
+      - name: Deploy Streamlit App to Cloud Run
+        run: |
+          gcloud run deploy wine-quality-prediction-app \
+            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/wine-quality-prediction-app/wine-quality-prediction-app:latest \
+            --platform managed \
+            --region europe-west1 \
+            --allow-unauthenticated
+            

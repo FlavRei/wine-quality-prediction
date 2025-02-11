@@ -69,3 +69,31 @@ resource "google_artifact_registry_repository" "wine-quality-prediction-api" {
   description   = "Docker repository for wine-quality-prediction API"
   format        = "DOCKER"
 }
+
+resource "google_cloud_run_service" "streamlit_app" {
+  name     = "wine-quality-streamlit-app"
+  location = var.region
+
+  template {
+    spec {
+      containers {
+        image = "europe-west1-docker.pkg.dev/${var.project_id}/wine-quality-prediction-app/wine-quality-prediction-app:latest"
+        ports {
+          container_port = 8501
+        }
+      }
+    }
+  }
+
+  traffic {
+    latest_revision = true
+    percent         = 100
+  }
+}
+
+resource "google_cloud_run_service_iam_member" "streamlit_app_noauth" {
+  service  = google_cloud_run_service.streamlit_app.name
+  location = google_cloud_run_service.streamlit_app.location
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
