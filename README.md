@@ -215,5 +215,5 @@ poetry run pytest
 
 Working on this project allowed me to put into practice the full spectrum of MLOps—from configuring CI/CD pipelines and managing infrastructure as code with Terraform, to integrating training, versioning, and model monitoring tools into one cohesive system. This project has deepened my understanding of the challenges involved in deploying and operating machine learning tools in production environments. 
 
-The API is accessible at the following address: http://34.79.2.159/predict
+The API is accessible at the following address: http://34.79.2.159/predict  
 The Streamlit app is available at: https://wine-quality-prediction-app-732582219557.europe-west1.run.app/
